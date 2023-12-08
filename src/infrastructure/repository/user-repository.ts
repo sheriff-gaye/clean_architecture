@@ -20,8 +20,14 @@ export class UserRepositoryImp implements UserRepository {
         return UserMapper.toEntity(user);
 
     }
-    update(updateData: User): Promise<User | null> {
-        throw new Error("Method not implemented.");
+    async update(updateData: User): Promise<User | null> {
+       const existingUser=await UserModel.findById(updateData.id);
+
+       if(!existingUser) throw new Error('User not found');
+       const mappedUser=UserMapper.toEntity(updateData);
+       await mappedUser.setPassword(updateData.password);
+       await UserModel.updateOne(UserMapper.toDB(mappedUser));
+       return UserMapper.toEntity(mappedUser);
     }
     async delete(id: string): Promise<void> {
         await UserModel.findOneAndDelete({ _id: id });
