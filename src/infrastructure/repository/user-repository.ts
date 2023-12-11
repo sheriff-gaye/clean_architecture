@@ -2,8 +2,15 @@ import { UserMapper } from "../../application/mappers/user-mapper";
 import { User } from "../../domain/entity/user-entity";
 import { UserRepository } from "../../domain/repository/user-repository";
 import { UserModel } from '../database/models/user';
+import { EmailService } from '../services/email-service';
 
 export class UserRepositoryImp implements UserRepository {
+
+    private readonly emailService: EmailService | undefined;
+
+    constructor(emailService?: EmailService) {
+        this.emailService = emailService;
+    }
 
     async register(data: User): Promise<User> {
         const existingUser = await UserModel.findOne({ email: data.email });
@@ -11,9 +18,16 @@ export class UserRepositoryImp implements UserRepository {
         if (existingUser) throw new Error('Email already in use');
         const MappedUser =  UserMapper.toEntity(data);
         await MappedUser.setPassword(data.password)
-        const newUser = await UserModel.create(UserMapper.toDB(MappedUser));
+       
 
+       
+        const newUser = await UserModel.create(UserMapper.toDB(MappedUser));
+        if (this.emailService && MappedUser.email) {
+            await this.emailService.sendRegistrationEmail(MappedUser.email, MappedUser.firstname);
+        }
         return UserMapper.toEntity(newUser);
+
+        
     }
     async findById(id: string): Promise<User | null> {
         const user = await UserModel.findById(id);

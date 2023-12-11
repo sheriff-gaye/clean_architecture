@@ -7,7 +7,7 @@ export class UpdateUserController {
     private readonly updateUserUseCase: UpdateUserUseCase
 
     constructor() {
-        const userRepository = new UserRepositoryImp();
+        const userRepository=new UserRepositoryImp();
         this.updateUserUseCase = new UpdateUserUseCase(userRepository);
     }
 

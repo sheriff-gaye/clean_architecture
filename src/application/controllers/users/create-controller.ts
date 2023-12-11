@@ -1,15 +1,17 @@
 import { UserRepositoryImp } from "../../../infrastructure/repository/user-repository";
 import { CreateUserUseCase } from "../../use-cases/user/user-create";
-import { GetAllUserUseCase } from "../../use-cases/user/user-getall";
 import { Request,Response } from "express";
+import { EmailService } from '../../../infrastructure/services/email-service';
 
 
 export class CreateUserController{
 
     private createUserUseCase:CreateUserUseCase
+    
 
     constructor(){
-        const userRepository=new UserRepositoryImp();
+        const emailService = new EmailService();
+        const userRepository=new UserRepositoryImp(emailService);
         this.createUserUseCase=new CreateUserUseCase(userRepository);
     }
 
