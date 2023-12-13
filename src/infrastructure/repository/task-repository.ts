@@ -15,14 +15,21 @@ export class TaskRepositoryIml implements TaskRepository{
         return TaskMapper.toEntity(task);
     }
     async update(updateData: Task): Promise<Task | null> {
-        const task=await TaskModel.findById(updateData.id);
-
-        if(!task) throw new Error ("Task Not Found");
-
-        const newTask=await TaskModel.updateOne(TaskMapper.toDB(updateData));
-        return TaskMapper.toEntity(newTask);
-
+        const task = await TaskModel.findById(updateData.id);
+    
+        if (!task) throw new Error("Task Not Found");
+    
+        const updatedTask = await TaskModel.findOneAndUpdate(
+            { _id: updateData.id },
+            TaskMapper.toDB(updateData),
+            { new: true }
+        );
+    
+        if (!updatedTask) throw new Error("Task Not Updated");
+    
+        return TaskMapper.toEntity(updatedTask);
     }
+    
     async delete(id: string): Promise<void> {
         await TaskModel.findByIdAndDelete({ _id: id });
         
