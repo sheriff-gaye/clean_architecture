@@ -1,6 +1,7 @@
 import { Task } from "../../../domain/entity/task.entity"
 
 export type TaskRequest={
+    id?:string,
     title:string,
     description?:string,
     isComplete?:boolean

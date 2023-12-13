@@ -10,14 +10,22 @@ export class TaskRepositoryIml implements TaskRepository{
         const  task=await TaskModel.create(TaskMapper.toDB(data));
         return TaskMapper.toEntity(task);
     }
-    findById(id: string): Promise<Task | null> {
-        throw new Error('Method not implemented.');
+   async  findById(id: string): Promise<Task | null> {
+        const task=await TaskModel.findById(id);
+        return TaskMapper.toEntity(task);
     }
-    update(updateData: Task): Promise<Task | null> {
-        throw new Error('Method not implemented.');
+    async update(updateData: Task): Promise<Task | null> {
+        const task=await TaskModel.findById(updateData.id);
+
+        if(!task) throw new Error ("Task Not Found");
+
+        const newTask=await TaskModel.updateOne(TaskMapper.toDB(updateData));
+        return TaskMapper.toEntity(newTask);
+
     }
-    delete(id: string): Promise<void> {
-        throw new Error('Method not implemented.');
+    async delete(id: string): Promise<void> {
+        await TaskModel.findByIdAndDelete({ _id: id });
+        
     }
     async getAll(): Promise<Task[]> {
         const tasks=await TaskModel.find();
