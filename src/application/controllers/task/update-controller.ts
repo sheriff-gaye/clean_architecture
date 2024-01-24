@@ -10,7 +10,6 @@ export class UpdateTaskController {
         this.updateTaskUseCase=new UpdateTaskUseCase(taskRepository);
     }
 
-
     async updateTask(req:Request,res:Response){
         try {
             const {id}=req.params
